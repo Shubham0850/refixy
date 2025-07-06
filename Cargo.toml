@@ -1,0 +1,22 @@
+[package]
+name = "refix"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+iced = { version = "0.12.1", features = ["canvas", "tokio"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+reqwest = { version = "0.11", features = ["json"] }
+serde_json = "1.0"
+arboard = "2.0"
+tao = "0.24"
+inputbot = "0.6"
+
+[package.metadata.bundle]
+name = "Refix"
+identifier = "com.example.refix"
+icon = ["resources/AppIcon.icns"]
+version = "0.1.0"
+
+[package.metadata.bundle.macos]
+frameworks = []
