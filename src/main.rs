@@ -38,8 +38,7 @@ impl Application for RefixApp {
         let shortcut_handler = ShortcutHandler::new();
         let clipboard_manager = ClipboardManager::new().expect("Failed to initialize clipboard");
         
-        // Start listening for shortcuts
-        shortcut_handler.start_listening();
+
         
         println!("🚀 Refix app started successfully!");
         if openai_client.is_some() {
@@ -143,12 +142,9 @@ impl Application for RefixApp {
                         println!("✨ Text improved successfully!");
                         println!("📝 Improved: \"{}\"", improved_text);
                         
-                        // Set the improved text to clipboard and paste it
+                        // Set the improved text to clipboard and paste it automatically
                         if let Err(e) = self.clipboard_manager.copy_and_paste_improved(&improved_text) {
                             eprintln!("❌ Failed to paste improved text: {}", e);
-                        } else {
-                            println!("📋 Improved text copied to clipboard!");
-                            println!("💡 You can now paste it with Cmd+V");
                         }
                     }
                     Err(e) => {

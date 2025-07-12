@@ -1,5 +1,6 @@
 use serde_json::{json, Value};
 use reqwest::Client;
+use std::env;
 
 #[derive(Clone)]
 pub struct OpenAIClient {
@@ -50,12 +51,43 @@ impl OpenAIClient {
 
         let response_json: Value = response.json().await?;
         
-        let improved_text = response_json["choices"][0]["message"]["content"]
+        let raw_text = response_json["choices"][0]["message"]["content"]
             .as_str()
             .ok_or("Failed to parse OpenAI response")?
             .trim()
             .to_string();
 
+        let improved_text = self.sanitize_response(&raw_text);
+
         Ok(improved_text)
+    }
+
+    fn sanitize_response(&self, text: &str) -> String {
+        let mut sanitized = text.to_string();
+        
+        // Remove quotes at the beginning and end
+        sanitized = sanitized.trim_matches('"').to_string();
+        sanitized = sanitized.trim_matches('\'').to_string();
+        
+        // Remove common prefixes like "Text:" or "Improved text:"
+        let prefixes_to_remove = [
+            "Text:",
+            "Improved text:",
+            "Refactored text:",
+            "Here's the improved text:",
+            "The improved version:",
+            "Improved:",
+            "Refactored:",
+        ];
+        
+        for prefix in &prefixes_to_remove {
+            if sanitized.starts_with(prefix) {
+                sanitized = sanitized[prefix.len()..].trim().to_string();
+                break;
+            }
+        }
+        
+        // Remove any remaining leading/trailing whitespace
+        sanitized.trim().to_string()
     }
 }
